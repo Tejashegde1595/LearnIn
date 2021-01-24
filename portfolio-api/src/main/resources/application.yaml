@@ -1,0 +1,29 @@
+server:
+  servlet:
+    port: 8080
+    contextPath: /api
+
+spring:
+
+  application:
+    name: portfolio-api
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/portfolio
+    username: postgres
+    password: password
+
+  jpa:
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+
+user:
+  default:
+    role: nonadmin
+
+  admin:
+    role: admin
