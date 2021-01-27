@@ -9,4 +9,5 @@ public class Constants {
     public static final String USER_REGISTRATION_MESSAGE = "USER SUCCESSFULLY REGISTERED";
     public static final String DELETE_USER_MESSAGE = "USER SUCCESSFULLY DELETED";
     public static final String SCHOOL_CREATION_MESSAGE = "SCHOOL RECORD SUCCESSFULLY CREATED";
+    public static final String COLLEGE_CREATION_MESSAGE = "COLLEGE RECORD SUCCESSFULLY CREATED";
 }

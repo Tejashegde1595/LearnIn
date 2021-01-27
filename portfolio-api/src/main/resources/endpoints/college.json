@@ -485,13 +485,18 @@
         "grade": {
           "type": "string",
           "description": "grade in the college"
+        },
+        "subject": {
+          "type": "string",
+          "description": "subject in the college"
         }
       },
       "required": [
         "college_name",
         "from_date",
         "to_date",
-        "grade"
+        "grade",
+        "subject"
       ]
     },
     "collegeResponse": {
@@ -533,6 +538,10 @@
         "grade": {
           "type": "string",
           "description": "grade in the college"
+        },
+        "subject": {
+          "type": "string",
+          "description": "subject in the college"
         }
       },
       "required": [
@@ -540,7 +549,8 @@
         "college_name",
         "from_date",
         "to_date",
-        "grade"
+        "grade",
+        "subject"
       ]
     },
     "collegeInfoEditRequest": {
@@ -561,6 +571,10 @@
         "grade": {
           "type": "string",
           "description": "grade in the college"
+        },
+        "subject": {
+          "type": "string",
+          "description": "subject in the college"
         }
       }
     },

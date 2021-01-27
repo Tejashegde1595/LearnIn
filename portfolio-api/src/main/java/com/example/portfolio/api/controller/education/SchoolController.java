@@ -60,7 +60,7 @@ public class SchoolController {
     public ResponseEntity<SchoolInfoEditResponse> editSchoolInfo(@RequestHeader("authorization") final String authorizationToken, @PathVariable(name="schoolId") final String schoolId, SchoolInfoEditRequest schoolInfoEditRequest) throws AuthenticationFailedException, ObjectNotFoundException, AuthorizationFailedException,DateConvertException {
         SchoolEntity schoolEntity = getEditRequestToEntity(schoolInfoEditRequest);
         SchoolEntity schoolEntityResponse = schoolService.editSchool(authorizationToken,schoolId,schoolEntity);
-        SchoolInfoEditResponse schoolInfoDeleteResponse = new SchoolInfoEditResponse().id(schoolEntity.getUuid()).status("SUCCESSFULLY EDITED THE SCHOOL INFO");
+        SchoolInfoEditResponse schoolInfoDeleteResponse = new SchoolInfoEditResponse().id(schoolEntityResponse.getUuid()).status("SUCCESSFULLY EDITED THE SCHOOL INFO");
         return new ResponseEntity<SchoolInfoEditResponse>(schoolInfoDeleteResponse,HttpStatus.OK);
     }
     private SchoolEntity requestToEntity(final SchoolRequest schoolRequest) throws DateConvertException {
