@@ -4,6 +4,7 @@ import com.example.portfolio.service.Entity.education.SchoolEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
@@ -25,5 +26,23 @@ public class SchoolDao {
     public List<SchoolEntity> getAllSchoolsByUser(String userId) {
         List<SchoolEntity> schoolEntityList = entityManager.createNamedQuery("schoolByUserId").setParameter("uuid",userId).getResultList();
         return schoolEntityList;
+    }
+
+    public SchoolEntity getSchoolById(String uuid){
+        try {
+            return entityManager.createNamedQuery("schoolByUuid",SchoolEntity.class).setParameter("uuid", uuid).getSingleResult();
+        }catch (NoResultException nre){
+            return null;
+        }
+    }
+
+    public SchoolEntity deleteSchool(SchoolEntity schoolEntity){
+        entityManager.remove(schoolEntity);
+        return schoolEntity;
+    }
+
+    public SchoolEntity editSchool(SchoolEntity schoolEntity){
+        entityManager.merge(schoolEntity);
+        return schoolEntity;
     }
 }
