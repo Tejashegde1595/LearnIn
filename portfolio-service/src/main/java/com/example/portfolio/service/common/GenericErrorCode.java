@@ -12,8 +12,8 @@ public enum GenericErrorCode implements ErrorCode {
     ATHR_001_COMMON("ATHR-001", "User has not signed in"),
     ATHR_002_COMMON("ATHR-002", "User is signed out.Sign in first to get user details"),
     USR_001_COMMON("USR-001", "User with entered uuid does not exist"),
-    SGOR_001("SGR-001", "User is not Signed in");
-
+    SGOR_001("SGR-001", "User is not Signed in"),
+    DATE_001("DAT-001", "Date entered is not in the correct format");
     private static final Map<String, GenericErrorCode> LOOKUP = new HashMap<String, GenericErrorCode>();
 
     static {
