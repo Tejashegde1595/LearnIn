@@ -104,7 +104,7 @@
                 </dependencies>
 
                 <executions>
-                    <execution>
+                   <execution>
                         <id>user</id>
                         <goals>
                             <goal>generate</goal>
@@ -151,6 +151,16 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/endpoints/postgrad.json</inputSpec>
+                            <language>spring</language>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>posts</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/endpoints/posts.json</inputSpec>
                             <language>spring</language>
                         </configuration>
                     </execution>
