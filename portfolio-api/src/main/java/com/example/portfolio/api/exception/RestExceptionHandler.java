@@ -48,5 +48,18 @@ public class RestExceptionHandler {
         );
     }
 
+    @ExceptionHandler(DateConvertException.class)
+    public ResponseEntity<ErrorResponse> dateConvertException(DateConvertException exc, WebRequest request) {
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<ErrorResponse> objectNotFoundException(ObjectNotFoundException exc, WebRequest request) {
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.UNAUTHORIZED
+        );
+    }
 
 }
