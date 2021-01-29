@@ -16,6 +16,7 @@ public enum GenericErrorCode implements ErrorCode {
     DATE_001("DAT-001", "Date entered is not in the correct format"),
     SCHL_001("SCHL-001", "Entered schoolId is not present"),
     COL_001("COL_001", "Entered collegeId is not present"),
+    POS_001("POS_001", "Entered postId is not present"),
     ATHR_003_COMMON("USR-002", "User does not have the permission to alter the object");
     private static final Map<String, GenericErrorCode> LOOKUP = new HashMap<String, GenericErrorCode>();
 
