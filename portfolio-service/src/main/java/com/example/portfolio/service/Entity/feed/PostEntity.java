@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.soap.Text;
+import java.util.List;
 
 @Entity
 @Table(name = "POSTS")
@@ -18,6 +19,39 @@ import javax.xml.soap.Text;
         }
 )
 public class PostEntity {
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = "UUID")
+    @Size(max = 200)
+    @NotNull
+    private String uuid;
+
+    @Column(name = "CONTENT",columnDefinition = "TEXT")
+    @NotNull
+    private String content;
+
+    @Column(name = "LIKES")
+    private Integer likes;
+
+    @JoinColumn(name = "user_id")
+    @ManyToOne
+    private UserEntity user;
+
+
+    @OneToMany(mappedBy = "postEntity",fetch = FetchType.EAGER)
+    private List<LikeEntity> likesInfo;
+
+
+    public List<LikeEntity> getLikesInfo() {
+        return likesInfo;
+    }
+
+    public void setLikesInfo(List<LikeEntity> likesInfo) {
+        this.likesInfo = likesInfo;
+    }
 
     public Integer getId() {
         return id;
@@ -58,27 +92,5 @@ public class PostEntity {
     public void setUser(UserEntity user) {
         this.user = user;
     }
-
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Column(name = "UUID")
-    @Size(max = 200)
-    @NotNull
-    private String uuid;
-
-    @Column(name = "CONTENT",columnDefinition = "TEXT")
-    @NotNull
-    private String content;
-
-    @Column(name = "LIKES")
-    private Integer likes;
-
-    @JoinColumn(name = "user_id")
-    @ManyToOne
-    private UserEntity user;
-
 
 }

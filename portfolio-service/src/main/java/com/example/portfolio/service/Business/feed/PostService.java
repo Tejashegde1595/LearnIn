@@ -2,6 +2,7 @@ package com.example.portfolio.service.Business.feed;
 
 import com.example.portfolio.service.Dao.feed.PostsDao;
 import com.example.portfolio.service.Dao.UserDao;
+import com.example.portfolio.service.Entity.feed.LikeEntity;
 import com.example.portfolio.service.Entity.feed.PostEntity;
 import com.example.portfolio.service.Entity.UserAuthTokenEntity;
 import com.example.portfolio.service.Entity.UserEntity;
@@ -79,6 +80,18 @@ public class PostService {
         postEntity.setContent(editPostEntity.getContent());
         return postsDao.editPost(postEntity);
     }
+
+    public List<LikeEntity> getLikesForPosts(final String authorizationToken, final String postId) throws AuthenticationFailedException,ObjectNotFoundException{
+        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+
+        PostEntity postEntity = postsDao.getPostById(postId);
+        if(postEntity==null){
+            throw new ObjectNotFoundException(POS_001.getDefaultMessage(),POS_001.getCode());
+        }
+        return postEntity.getLikesInfo();
+
+    }
+
 
 
     private UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws

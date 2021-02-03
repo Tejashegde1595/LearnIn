@@ -1,0 +1,153 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Like API",
+    "version": "1.0.0",
+    "description": "API of Like Services"
+  },
+  "host": "quora.io",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "basePath": "/api/v1",
+  "tags": [
+    {
+      "name": "API#001 Users",
+      "description": "All operations marked with 'API#001 Users' are relevant to the user use case"
+    }
+  ],
+  "paths": {
+    "/post/like": {
+      "x-swagger-router-controller": "api",
+      "post": {
+        "tags": [
+          "API#001 User Sign up"
+        ],
+        "operationId": "signupUser",
+        "summary": "signup",
+        "description": "Each user who needs access to Quora application should signup using their valid email address and set a password for an authorized access.\n",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "LikeResponse",
+            "description": "Response containing Like information",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LikeResponse"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "CREATED - User has been signuped successfully",
+            "headers": {
+              "request-id": {
+                "type": "string",
+                "description": "Used as correlation id while tracing for the request in the backend"
+              },
+              "location": {
+                "type": "string",
+                "description": "Location of the new resource which was created by this request"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/LikeResponse"
+            }
+          },
+          "400": {
+            "description": "BAD REQUEST - server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, mandatory elements are missing)",
+            "headers": {
+              "request-id": {
+                "type": "string",
+                "description": "Used as correlation id while tracing for the request in the backend"
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHORIZED - user has provided wrong credentials",
+            "headers": {
+              "request-id": {
+                "type": "string",
+                "description": "Used as correlation id while tracing for the request in the backend"
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN - request has not been applied because client application has no permission to perform action",
+            "headers": {
+              "request-id": {
+                "type": "string",
+                "description": "Used as correlation id while tracing for the request in the backend"
+              }
+            }
+          },
+          "422": {
+            "description": "UNPROCESSABLE ENTITY - request was well-formed but server unable to process due to semantic errors",
+            "headers": {
+              "request-id": {
+                "type": "string",
+                "description": "Used as correlation id while tracing for the request flow to the backend"
+              }
+            }
+          },
+          "500": {
+            "description": "INTERNAL SERVER ERROR - server encountered an unexpected condition that prevented it from fulfilling the request.",
+            "headers": {
+              "request-id": {
+                "type": "string",
+                "description": "Used as correlation id while tracing for the request in the backend"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "parameters": {
+    "Authorization": {
+      "name": "authorization",
+      "type": "string",
+      "in": "header",
+      "required": true,
+      "description": "Mandatory user credentials in Base64 encoded format."
+    },
+    "BearerAuthorization": {
+      "name": "authorization",
+      "type": "string",
+      "in": "header",
+      "required": true,
+      "description": "Mandatory user credentials in bearer http authentication scheme format."
+    }
+  },
+  "definitions": {
+    "LikeResponse": {
+      "type": "object",
+      "properties": {
+        "user_name": {
+          "type": "string",
+          "description": "Username"
+        },
+        "postID": {
+          "type": "string",
+          "description": "Country of the new user"
+        },
+        "userID": {
+          "type": "string",
+          "description": "Date of birth of the new user"
+        }
+      },
+      "required": [
+        "user_name",
+        "postID",
+        "userID"
+      ]
+    }
+  }
+}
