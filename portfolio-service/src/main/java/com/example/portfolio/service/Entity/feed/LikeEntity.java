@@ -1,17 +1,20 @@
 package com.example.portfolio.service.Entity.feed;
 
 import com.example.portfolio.service.Entity.UserEntity;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@Table(name = "LIKES")
 @Entity
 @NamedQueries(
         {
-                @NamedQuery(name = "getAllPosts", query = "select p from PostEntity p"),
-                @NamedQuery(name = "postByUuid", query = "select p from PostEntity p where p.uuid = :uuid"),
-                @NamedQuery(name = "postByUserId", query = "select p from PostEntity p where p.user.uuid = :uuid")
+                @NamedQuery(name = "getAllLikes", query = "select l from LikeEntity l"),
+                @NamedQuery(name = "getLikeByUuid", query = "select l from LikeEntity l where l.uuid = :uuid"),
+                @NamedQuery(name = "likeByUserPostId", query = "select l from LikeEntity l where l.userEntity.uuid = :uuid and l.postEntity.uuid=:pid")
         }
 )
 public class LikeEntity {
@@ -19,6 +22,35 @@ public class LikeEntity {
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "UUID")
+    @Size(max = 200)
+    @NotNull
+    private String uuid;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    private PostEntity postEntity;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id")
+    @NotNull
+    private UserEntity userEntity;
+
+    @Column(name = "liked")
+    private Boolean isLiked=false;
+
+    public Boolean getLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(Boolean liked) {
+        isLiked = liked;
+    }
+
 
     public Integer getId() {
         return id;
@@ -52,18 +84,5 @@ public class LikeEntity {
         this.userEntity = userEntity;
     }
 
-    @Column(name = "UUID")
-    @Size(max = 200)
-    @NotNull
-    private String uuid;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    @NotNull
-    private PostEntity postEntity;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @NotNull
-    private UserEntity userEntity;
 }

@@ -39,6 +39,8 @@ public class PostsDao {
         }
     }
 
+
+
     public PostEntity editPost(PostEntity postEntity){
         entityManager.merge(postEntity);
         return postEntity;

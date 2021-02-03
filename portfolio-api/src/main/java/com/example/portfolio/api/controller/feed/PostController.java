@@ -2,6 +2,7 @@ package com.example.portfolio.api.controller.feed;
 
 import com.example.portfolio.api.model.*;
 import com.example.portfolio.service.Business.feed.PostService;
+import com.example.portfolio.service.Entity.feed.LikeEntity;
 import com.example.portfolio.service.Entity.feed.PostEntity;
 import com.example.portfolio.service.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,13 @@ public class PostController {
         List<PostEntity> postEntityList = postService.getAllPosts(authorizationToken);
         List<PostInfoDetailsResponse> postInfoDetailsResponses = getResponseList(postEntityList);
         return new ResponseEntity<List<PostInfoDetailsResponse>>(postInfoDetailsResponses,HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,path = "/all/likes/{postId}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<LikeResponse>> getLikesForPosts(@RequestHeader("authorization") final String authorizationToken,@PathVariable("postId") final String postId) throws AuthenticationFailedException,ObjectNotFoundException{
+        List<LikeEntity> likeEntityList = postService.getLikesForPosts(authorizationToken,postId);
+        List<LikeResponse> likeResponses = getResponseLikeList(likeEntityList);
+        return new ResponseEntity<List<LikeResponse>>(likeResponses,HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET,path = "/all/{userId}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -82,4 +90,18 @@ public class PostController {
         }
         return postInfoDetailsResponses;
     }
+
+    private List<LikeResponse> getResponseLikeList(List<LikeEntity> likeEntities){
+        Iterator<LikeEntity> iterator = likeEntities.listIterator();
+        List<LikeResponse> likeResponses = new ArrayList<LikeResponse>();
+        while(iterator.hasNext()){
+            LikeEntity likeEntity = iterator.next();
+            LikeResponse likeResponse = new LikeResponse().userID(likeEntity.getUserEntity().getUuid()).userName(likeEntity.getUserEntity().getUserName())
+                    .postID(likeEntity.getPostEntity().getUuid());
+            likeResponses.add(likeResponse);
+        }
+        return likeResponses;
+    }
+
+
 }

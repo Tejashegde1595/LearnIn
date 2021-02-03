@@ -1,5 +1,6 @@
 package com.example.portfolio.service.Entity;
 
+import com.example.portfolio.service.Entity.feed.LikeEntity;
 import org.apache.commons.lang3.builder.*;
 import org.hibernate.annotations.Type;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.soap.Text;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -78,6 +80,17 @@ public class UserEntity implements Serializable {
     @Column(name = "CONTACTNUMBER")
     @Size(max = 50)
     private String contactNumber;
+
+    public List<LikeEntity> getLikesInfo() {
+        return likesInfo;
+    }
+
+    public void setLikesInfo(List<LikeEntity> likesInfo) {
+        this.likesInfo = likesInfo;
+    }
+
+    @OneToMany(mappedBy = "userEntity",fetch = FetchType.EAGER)
+    private List<LikeEntity> likesInfo;
 
     @Column(name="IMAGE",columnDefinition = "TEXT")
     private String image;
