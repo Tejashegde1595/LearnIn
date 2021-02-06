@@ -180,6 +180,16 @@
                             <language>spring</language>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>career</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/endpoints/career.json</inputSpec>
+                            <language>spring</language>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

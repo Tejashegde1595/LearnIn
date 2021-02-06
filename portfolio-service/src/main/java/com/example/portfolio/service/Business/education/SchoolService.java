@@ -5,6 +5,7 @@ import com.example.portfolio.service.Dao.education.SchoolDao;
 import com.example.portfolio.service.Entity.UserAuthTokenEntity;
 import com.example.portfolio.service.Entity.UserEntity;
 import com.example.portfolio.service.Entity.education.SchoolEntity;
+import com.example.portfolio.service.common.UserAuth;
 import com.example.portfolio.service.exception.AuthenticationFailedException;
 import com.example.portfolio.service.exception.AuthorizationFailedException;
 import com.example.portfolio.service.exception.ObjectNotFoundException;
@@ -27,20 +28,23 @@ public class SchoolService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private UserAuth userAuth;
+
     @Transactional
     public SchoolEntity createSchool(final SchoolEntity schoolEntity,final String authorizationToken) throws AuthenticationFailedException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         schoolEntity.setUser_id(userAuthToken.getUser());
         return schoolDao.createSchoolEntity(schoolEntity);
     }
 
     public List<SchoolEntity> getAllSchool(final String authorizationToken) throws AuthenticationFailedException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         return schoolDao.getAllSchools();
     }
 
     public List<SchoolEntity> getSchoolByUserId(final String authorizationToken,final String userId) throws AuthenticationFailedException,UserNotFoundException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         UserEntity userEntity = userDao.getUser(userId);
         if(userEntity==null){
             throw new UserNotFoundException(USR_001_COMMON.getDefaultMessage(),USR_001_COMMON.getCode());
@@ -50,7 +54,7 @@ public class SchoolService {
 
     @Transactional
     public SchoolEntity deleteSchool(final String authorizationToken,final String schoolId) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException{
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         SchoolEntity schoolEntity = schoolDao.getSchoolById(schoolId);
         if(schoolEntity==null){
             throw new ObjectNotFoundException(SCHL_001.getDefaultMessage(),SCHL_001.getCode());
@@ -63,7 +67,7 @@ public class SchoolService {
 
     @Transactional
     public SchoolEntity editSchool(final String authorizationToken,final String schoolId,SchoolEntity editedSchoolEntity) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException{
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         SchoolEntity schoolEntity = schoolDao.getSchoolById(schoolId);
         if(schoolEntity==null){
             throw new ObjectNotFoundException(SCHL_001.getDefaultMessage(),SCHL_001.getCode());
@@ -75,16 +79,6 @@ public class SchoolService {
         return schoolDao.editSchool(schoolEntity);
     }
 
-    private UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws AuthenticationFailedException{
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
-        if (userAuthTokenEntity == null) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        if (userAuthTokenEntity.getLogoutAt() != null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        return userAuthTokenEntity;
-    }
 
     private SchoolEntity getEditedEntity(SchoolEntity editedSchoolEntity,SchoolEntity schoolEntity){
 

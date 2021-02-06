@@ -1,5 +1,4 @@
-package com.example.portfolio.service.Entity.education;
-
+package com.example.portfolio.service.Entity.career;
 import com.example.portfolio.service.Entity.UserEntity;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -7,19 +6,21 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "EDUCATION_BACHELORS")
+@Table(name = "CAREER")
 @NamedQueries(
         {
-                @NamedQuery(name = "getAllBachelors", query = "select b from BachelorsEntity b"),
-                @NamedQuery(name = "bachelorsByUuid", query = "select b from BachelorsEntity b where b.uuid = :uuid"),
-                @NamedQuery(name = "bachelorsByName", query = "select b from BachelorsEntity b where b.bachelorsCollegeName =:bachelorsCollegeName"),
-                @NamedQuery(name = "bachelorsByUserId", query = "select b from BachelorsEntity b where b.user_id.uuid = :uuid")
+                @NamedQuery(name = "getAllCareerInfo", query = "select c from CareerEntity c"),
+                @NamedQuery(name = "careerByUuid", query = "select c from CareerEntity c where c.uuid = :uuid"),
+                @NamedQuery(name = "careerByCompanyName", query = "select c from CareerEntity c where c.companyName =:companyName"),
+                @NamedQuery(name = "careerByUserId", query = "select c from CareerEntity c where c.user_id.uuid = :uuid")
         }
 )
-public class BachelorsEntity implements Serializable {
+public class CareerEntity implements Serializable {
+
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,12 +31,12 @@ public class BachelorsEntity implements Serializable {
     private String uuid;
 
     @NotNull
-    @Column(name = "BACHELORS_COLLEGE_NAME")
-    private String bachelorsCollegeName;
+    @Column(name = "COMPANY_NAME")
+    private String companyName;
 
     @NotNull
-    @Column(name = "GRADE")
-    private String grade;
+    @Column(name = "DESIGNATION")
+    private String designation;
 
     @Column(name = "FROM_DATE")
     private Date fromDate;
@@ -44,9 +45,6 @@ public class BachelorsEntity implements Serializable {
     @Column(name = "TO_DATE")
     private Date toDate;
 
-
-    @Column(name = "SUBJECT")
-    private String subject;
 
     @JoinColumn(name = "USER_ID")
     @ManyToOne
@@ -67,20 +65,20 @@ public class BachelorsEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getCollegeName() {
-        return bachelorsCollegeName;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setCollegeName(String bachelorsCollegeName) {
-        this.bachelorsCollegeName = bachelorsCollegeName;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
-    public String getGrade() {
-        return grade;
+    public String getDesignation() {
+        return designation;
     }
 
-    public void setGrade(String grade) {
-        this.grade = grade;
+    public void setDesignation(String designation) {
+        this.designation = designation;
     }
 
     public Date getFromDate() {
@@ -107,12 +105,6 @@ public class BachelorsEntity implements Serializable {
         this.user_id = user_id;
     }
 
-    public String getSubject() {
-        return subject;
-    }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
 
 }
