@@ -30,30 +30,17 @@ public class SchoolService {
     @Transactional
     public SchoolEntity createSchool(final SchoolEntity schoolEntity,final String authorizationToken) throws AuthenticationFailedException {
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
-
-        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
         schoolEntity.setUser_id(userAuthToken.getUser());
         return schoolDao.createSchoolEntity(schoolEntity);
     }
 
     public List<SchoolEntity> getAllSchool(final String authorizationToken) throws AuthenticationFailedException {
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
-
-        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-
         return schoolDao.getAllSchools();
     }
 
     public List<SchoolEntity> getSchoolByUserId(final String authorizationToken,final String userId) throws AuthenticationFailedException,UserNotFoundException {
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
-
-        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
         UserEntity userEntity = userDao.getUser(userId);
         if(userEntity==null){
             throw new UserNotFoundException(USR_001_COMMON.getDefaultMessage(),USR_001_COMMON.getCode());
@@ -64,10 +51,6 @@ public class SchoolService {
     @Transactional
     public SchoolEntity deleteSchool(final String authorizationToken,final String schoolId) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException{
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
-
-        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
         SchoolEntity schoolEntity = schoolDao.getSchoolById(schoolId);
         if(schoolEntity==null){
             throw new ObjectNotFoundException(SCHL_001.getDefaultMessage(),SCHL_001.getCode());
@@ -81,10 +64,6 @@ public class SchoolService {
     @Transactional
     public SchoolEntity editSchool(final String authorizationToken,final String schoolId,SchoolEntity editedSchoolEntity) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException{
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
-
-        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
         SchoolEntity schoolEntity = schoolDao.getSchoolById(schoolId);
         if(schoolEntity==null){
             throw new ObjectNotFoundException(SCHL_001.getDefaultMessage(),SCHL_001.getCode());
@@ -96,10 +75,12 @@ public class SchoolService {
         return schoolDao.editSchool(schoolEntity);
     }
 
-    private UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws
-            AuthenticationFailedException{
+    private UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws AuthenticationFailedException{
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
         if (userAuthTokenEntity == null) {
+            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
+        }
+        if (userAuthTokenEntity.getLogoutAt() != null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
         }
         return userAuthTokenEntity;

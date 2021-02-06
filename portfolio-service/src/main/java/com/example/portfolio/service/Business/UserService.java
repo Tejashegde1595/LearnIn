@@ -135,6 +135,7 @@ public class UserService {
         if (userAuthTokenEntity == null) {
             throw new SignOutRestrictedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
         }
+
         return userAuthTokenEntity;
     }
 
