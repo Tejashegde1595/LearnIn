@@ -30,30 +30,17 @@ public class CollegeService {
     @Transactional
     public CollegeEntity createCollege(final CollegeEntity collegeEntity,final String authorizationToken) throws AuthenticationFailedException {
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
-
-        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
         collegeEntity.setUser_id(userAuthToken.getUser());
         return collegeDao.createCollegeEntity(collegeEntity);
     }
 
     public List<CollegeEntity> getAllCollege(final String authorizationToken) throws AuthenticationFailedException {
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
-
-        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-
         return collegeDao.getAllColleges();
     }
 
     public List<CollegeEntity> getCollegeByUserId(final String authorizationToken,final String userId) throws AuthenticationFailedException,UserNotFoundException {
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
-
-        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
         UserEntity userEntity = userDao.getUser(userId);
         if(userEntity==null){
             throw new UserNotFoundException(USR_001_COMMON.getDefaultMessage(),USR_001_COMMON.getCode());
@@ -64,10 +51,6 @@ public class CollegeService {
     @Transactional
     public CollegeEntity deleteCollege(final String authorizationToken,final String collegeId) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException{
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
-
-        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
         CollegeEntity CollegeEntity = collegeDao.getCollegeById(collegeId);
         if(CollegeEntity==null){
             throw new ObjectNotFoundException(COL_001.getDefaultMessage(),COL_001.getCode());
@@ -81,10 +64,6 @@ public class CollegeService {
     @Transactional
     public CollegeEntity editCollege(final String authorizationToken,final String collegeId,CollegeEntity editedCollegeEntity) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException{
         UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
-
-        if (userAuthToken.getLogoutAt() != null || userAuthToken.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
         CollegeEntity CollegeEntity = collegeDao.getCollegeById(collegeId);
         if(CollegeEntity==null){
             throw new ObjectNotFoundException(SCHL_001.getDefaultMessage(),SCHL_001.getCode());
@@ -100,6 +79,9 @@ public class CollegeService {
             AuthenticationFailedException{
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
         if (userAuthTokenEntity == null) {
+            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
+        }
+        if (userAuthTokenEntity.getLogoutAt() != null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
             throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
         }
         return userAuthTokenEntity;

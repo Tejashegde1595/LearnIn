@@ -470,7 +470,7 @@
     "bachelorsRequest": {
       "type": "object",
       "properties": {
-        "bachelors_name": {
+        "bachelors_college_name": {
           "type": "string",
           "description": "name of the bachelors"
         },
@@ -492,7 +492,7 @@
         }
       },
       "required": [
-        "bachelors_name",
+        "bachelors_college_name",
         "from_date",
         "to_date",
         "grade"
@@ -522,7 +522,7 @@
           "type": "string",
           "description": "bachelors uuid"
         },
-        "bachelors_name": {
+        "bachelors_college_name": {
           "type": "string",
           "description": "name of the bachelors"
         },
@@ -545,7 +545,7 @@
       },
       "required": [
         "id",
-        "bachelors_name",
+        "bachelors_college_name",
         "from_date",
         "to_date",
         "grade",
@@ -555,7 +555,7 @@
     "bachelorsInfoEditRequest": {
       "type": "object",
       "properties": {
-        "bachelors_name": {
+        "bachelors_college_name": {
           "type": "string",
           "description": "name of the bachelors"
         },
