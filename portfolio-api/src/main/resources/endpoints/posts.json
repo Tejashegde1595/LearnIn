@@ -515,6 +515,10 @@
         "user": {
           "type": "string",
           "description": "user of the post"
+        },
+        "image": {
+          "type": "object",
+          "description": "image of the post"
         }
       },
       "required": [

@@ -13,4 +13,5 @@ public class Constants {
     public static final String POST_CREATION_MESSAGE = "POST RECORD SUCCESSFULLY CREATED";
     public static final String POST_DELETION_MESSAGE = "POST RECORD SUCCESSFULLY DELETED";
     public static final String POST_EDIT_MESSAGE = "POST RECORD SUCCESSFULLY EDITED";
+    public static final String POST_IMAGE_LOCATION = "C:\\Users\\tejas\\source\\repos\\Portfolio\\portfolio-service\\src\\main\\resources\\img\\posts";
 }

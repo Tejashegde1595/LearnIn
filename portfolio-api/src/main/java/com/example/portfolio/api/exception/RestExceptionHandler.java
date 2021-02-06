@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import java.io.IOException;
+
 @ControllerAdvice
 public class RestExceptionHandler {
 
@@ -59,6 +61,13 @@ public class RestExceptionHandler {
     public ResponseEntity<ErrorResponse> objectNotFoundException(ObjectNotFoundException exc, WebRequest request) {
         return new ResponseEntity<ErrorResponse>(
                 new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ErrorResponse> objectNotFoundException(IOException exc, WebRequest request) {
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse().code("INP-001").message("INPUT ERROR"), HttpStatus.NOT_ACCEPTABLE
         );
     }
 
