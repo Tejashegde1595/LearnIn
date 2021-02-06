@@ -45,6 +45,17 @@ public class PostEntity {
     private List<LikeEntity> likesInfo;
 
 
+    @Transient
+    private byte[] image;
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
     public List<LikeEntity> getLikesInfo() {
         return likesInfo;
     }
