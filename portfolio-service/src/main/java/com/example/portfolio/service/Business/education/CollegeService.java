@@ -5,6 +5,7 @@ import com.example.portfolio.service.Dao.education.CollegeDao;
 import com.example.portfolio.service.Entity.UserAuthTokenEntity;
 import com.example.portfolio.service.Entity.UserEntity;
 import com.example.portfolio.service.Entity.education.CollegeEntity;
+import com.example.portfolio.service.common.UserAuth;
 import com.example.portfolio.service.exception.AuthenticationFailedException;
 import com.example.portfolio.service.exception.AuthorizationFailedException;
 import com.example.portfolio.service.exception.ObjectNotFoundException;
@@ -27,20 +28,23 @@ public class CollegeService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private UserAuth userAuth;
+
     @Transactional
     public CollegeEntity createCollege(final CollegeEntity collegeEntity,final String authorizationToken) throws AuthenticationFailedException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         collegeEntity.setUser_id(userAuthToken.getUser());
         return collegeDao.createCollegeEntity(collegeEntity);
     }
 
     public List<CollegeEntity> getAllCollege(final String authorizationToken) throws AuthenticationFailedException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         return collegeDao.getAllColleges();
     }
 
     public List<CollegeEntity> getCollegeByUserId(final String authorizationToken,final String userId) throws AuthenticationFailedException,UserNotFoundException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         UserEntity userEntity = userDao.getUser(userId);
         if(userEntity==null){
             throw new UserNotFoundException(USR_001_COMMON.getDefaultMessage(),USR_001_COMMON.getCode());
@@ -50,7 +54,7 @@ public class CollegeService {
 
     @Transactional
     public CollegeEntity deleteCollege(final String authorizationToken,final String collegeId) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException{
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         CollegeEntity CollegeEntity = collegeDao.getCollegeById(collegeId);
         if(CollegeEntity==null){
             throw new ObjectNotFoundException(COL_001.getDefaultMessage(),COL_001.getCode());
@@ -63,10 +67,10 @@ public class CollegeService {
 
     @Transactional
     public CollegeEntity editCollege(final String authorizationToken,final String collegeId,CollegeEntity editedCollegeEntity) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException{
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         CollegeEntity CollegeEntity = collegeDao.getCollegeById(collegeId);
         if(CollegeEntity==null){
-            throw new ObjectNotFoundException(SCHL_001.getDefaultMessage(),SCHL_001.getCode());
+            throw new ObjectNotFoundException(COL_001.getDefaultMessage(),COL_001.getCode());
         }
         if(CollegeEntity.getUser_id()!=userAuthToken.getUser()){
             throw new AuthorizationFailedException(ATHR_003_COMMON.getDefaultMessage(),ATHR_003_COMMON.getCode());
@@ -75,17 +79,6 @@ public class CollegeService {
         return collegeDao.editCollege(CollegeEntity);
     }
 
-    private UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws
-            AuthenticationFailedException{
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
-        if (userAuthTokenEntity == null) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        if (userAuthTokenEntity.getLogoutAt() != null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        return userAuthTokenEntity;
-    }
 
     private CollegeEntity getEditedEntity(CollegeEntity editedCollegeEntity,CollegeEntity collegeEntity){
 

@@ -6,6 +6,7 @@ import com.example.portfolio.service.Dao.feed.PostsDao;
 import com.example.portfolio.service.Entity.UserAuthTokenEntity;
 import com.example.portfolio.service.Entity.feed.LikeEntity;
 import com.example.portfolio.service.Entity.feed.PostEntity;
+import com.example.portfolio.service.common.UserAuth;
 import com.example.portfolio.service.exception.AuthenticationFailedException;
 import com.example.portfolio.service.exception.AuthorizationFailedException;
 import com.example.portfolio.service.exception.ObjectNotFoundException;
@@ -31,9 +32,12 @@ public class LikeService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private UserAuth userAuth;
+
     @Transactional
     public PostEntity likePost(final String authorizationToken, final String postId) throws AuthenticationFailedException, ObjectNotFoundException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         PostEntity postEntity = postsDao.getPostById(postId);
         if(postEntity==null){
             throw new ObjectNotFoundException(POS_001.getDefaultMessage(),POS_001.getCode());
@@ -66,14 +70,5 @@ public class LikeService {
             return likesDao.addLike(likeEntity);
         }
     }
-    private UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws AuthenticationFailedException{
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
-        if (userAuthTokenEntity == null) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        if (userAuthTokenEntity.getLogoutAt() != null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        return userAuthTokenEntity;
-    }
+
 }

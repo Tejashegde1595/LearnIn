@@ -1,12 +1,14 @@
 package com.example.portfolio.service.Business.education;
 
 import com.example.portfolio.service.Dao.UserDao;
+import com.example.portfolio.service.Dao.career.CareerDao;
 import com.example.portfolio.service.Dao.education.BachelorDao;
 import com.example.portfolio.service.Dao.education.CollegeDao;
 import com.example.portfolio.service.Entity.UserAuthTokenEntity;
 import com.example.portfolio.service.Entity.UserEntity;
 import com.example.portfolio.service.Entity.education.BachelorsEntity;
 import com.example.portfolio.service.Entity.education.CollegeEntity;
+import com.example.portfolio.service.common.UserAuth;
 import com.example.portfolio.service.exception.AuthenticationFailedException;
 import com.example.portfolio.service.exception.AuthorizationFailedException;
 import com.example.portfolio.service.exception.ObjectNotFoundException;
@@ -30,20 +32,23 @@ public class BachelorService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private UserAuth userAuth;
+
     @Transactional
     public BachelorsEntity createBachelors(final BachelorsEntity bachelorsEntity, final String authorizationToken) throws AuthenticationFailedException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         bachelorsEntity.setUser_id(userAuthToken.getUser());
         return bachelorDao.createBachelorsEntity(bachelorsEntity);
     }
 
     public List<BachelorsEntity> getAllBachelors(final String authorizationToken) throws AuthenticationFailedException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         return bachelorDao.getAllBachelors();
     }
 
     public List<BachelorsEntity> getAllBachelorsByUserId(final String authorizationToken,final String userId) throws AuthenticationFailedException, UserNotFoundException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         UserEntity userEntity = userDao.getUser(userId);
         if(userEntity==null){
             throw new UserNotFoundException(USR_001_COMMON.getDefaultMessage(),USR_001_COMMON.getCode());
@@ -53,10 +58,10 @@ public class BachelorService {
 
     @Transactional
     public BachelorsEntity deleteBachelors(final String authorizationToken,final String bachelorsId) throws AuthenticationFailedException, ObjectNotFoundException, AuthorizationFailedException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         BachelorsEntity bachelorsEntity = bachelorDao.getBachelorsById(bachelorsId);
         if(bachelorsEntity==null){
-            throw new ObjectNotFoundException(COL_001.getDefaultMessage(),COL_001.getCode());
+            throw new ObjectNotFoundException(BACH_001.getDefaultMessage(),BACH_001.getCode());
         }
         if(bachelorsEntity.getUser_id()!=userAuthToken.getUser() && !userAuthToken.getUser().getRole().equals("admin")){
             throw new AuthorizationFailedException(ATHR_003_COMMON.getDefaultMessage(),ATHR_003_COMMON.getCode());
@@ -67,10 +72,10 @@ public class BachelorService {
 
     @Transactional
     public BachelorsEntity editBachelors(final String authorizationToken,final String bachelorsId,BachelorsEntity editedBachelorsEntity) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException{
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         BachelorsEntity bachelorsEntity = bachelorDao.getBachelorsById(bachelorsId);
         if( bachelorsEntity == null){
-            throw new ObjectNotFoundException(SCHL_001.getDefaultMessage(),SCHL_001.getCode());
+            throw new ObjectNotFoundException(BACH_001.getDefaultMessage(),BACH_001.getCode());
         }
         if(bachelorsEntity.getUser_id()!=userAuthToken.getUser()){
             throw new AuthorizationFailedException(ATHR_003_COMMON.getDefaultMessage(),ATHR_003_COMMON.getCode());
@@ -100,15 +105,4 @@ public class BachelorService {
     }
 
 
-    private UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws
-            AuthenticationFailedException{
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
-        if (userAuthTokenEntity == null) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        if (userAuthTokenEntity.getLogoutAt() != null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        return userAuthTokenEntity;
-    }
 }

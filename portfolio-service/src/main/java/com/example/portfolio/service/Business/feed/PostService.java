@@ -7,6 +7,7 @@ import com.example.portfolio.service.Entity.feed.PostEntity;
 import com.example.portfolio.service.Entity.UserAuthTokenEntity;
 import com.example.portfolio.service.Entity.UserEntity;
 import com.example.portfolio.service.common.FileUploadUtil;
+import com.example.portfolio.service.common.UserAuth;
 import com.example.portfolio.service.exception.AuthenticationFailedException;
 import com.example.portfolio.service.exception.AuthorizationFailedException;
 import com.example.portfolio.service.exception.ObjectNotFoundException;
@@ -38,9 +39,13 @@ public class PostService {
     @Autowired
     private UserDao userDao;
 
+
+    @Autowired
+    private UserAuth userAuth;
+
     @Transactional
     public PostEntity createPost(final PostEntity postEntity, final String authorizationToken, final MultipartFile multipartFile) throws AuthenticationFailedException, IOException {
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         postEntity.setUser(userAuthToken.getUser());
         String fileName = postEntity.getUuid();
         FileUploadUtil.saveFile(POST_IMAGE_LOCATION, fileName, multipartFile);
@@ -48,14 +53,14 @@ public class PostService {
     }
 
     public List<PostEntity> getAllPosts(final String authorizationToken) throws AuthenticationFailedException,IOException{
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
         List<PostEntity> postEntityList = postsDao.getAllPosts();
         postEntityList = addImageToPost(postEntityList);
         return postEntityList;
     }
 
     public List<PostEntity> getAllPostsByUser(final String authorizationToken,final String userId) throws AuthenticationFailedException,UserNotFoundException,IOException{
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
 
         UserEntity userEntity = userDao.getUser(userId);
         if(userEntity==null){
@@ -68,7 +73,7 @@ public class PostService {
 
     @Transactional
     public PostEntity deletePost(final String authorizationToken,final String postId) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException,IOException{
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
 
         PostEntity postEntity = postsDao.getPostById(postId);
         if(postEntity==null){
@@ -84,7 +89,7 @@ public class PostService {
 
     @Transactional
     public PostEntity editPost(final String authorizationToken,final String postId,final PostEntity editPostEntity,final MultipartFile multipartFile) throws AuthenticationFailedException,ObjectNotFoundException,AuthorizationFailedException,IOException{
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
 
         PostEntity postEntity = postsDao.getPostById(postId);
         if(postEntity==null){
@@ -101,7 +106,7 @@ public class PostService {
     }
 
     public List<LikeEntity> getLikesForPosts(final String authorizationToken, final String postId) throws AuthenticationFailedException,ObjectNotFoundException{
-        UserAuthTokenEntity userAuthToken = getUserAuthToken(authorizationToken);
+        UserAuthTokenEntity userAuthToken = userAuth.getUserAuthToken(authorizationToken);
 
         PostEntity postEntity = postsDao.getPostById(postId);
         if(postEntity==null){
@@ -111,19 +116,6 @@ public class PostService {
 
     }
 
-
-
-    private UserAuthTokenEntity getUserAuthToken(final String authorizationToken) throws
-            AuthenticationFailedException{
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
-        if (userAuthTokenEntity == null) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        if (userAuthTokenEntity.getLogoutAt() != null || userAuthTokenEntity.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new AuthenticationFailedException(SGOR_001.getCode(), SGOR_001.getDefaultMessage());
-        }
-        return userAuthTokenEntity;
-    }
 
     private List<PostEntity> addImageToPost(List<PostEntity> postEntities) throws IOException{
         Iterator<PostEntity> iterator = postEntities.iterator();
